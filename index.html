@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Barra del Avión - Viaje</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #f0f0f0; }
+    .barra { font-size: 24px; white-space: pre; }
+  </style>
+</head>
+<body>
+
+  <h2>Viaje Franck → Punta Cana</h2>
+
+  <div class="barra" id="barra"></div>
+  <div>Progreso: <span id="porcentaje"></span>%</div>
+
+  <script>
+    const totalBloques = 20;
+
+    // Fechas importantes
+    const fechaSalida = new Date('2025-07-10T15:00:00');
+    const fechaInicio = new Date(fechaSalida);
+    fechaInicio.setDate(fechaSalida.getDate() - 30); // 30 días antes
+
+    function actualizarBarra() {
+      const ahora = new Date();
+      let progreso = (ahora - fechaInicio) / (fechaSalida - fechaInicio);
+      progreso = Math.min(Math.max(progreso, 0), 1);
+
+      const bloquesLlenos = Math.round(progreso * totalBloques);
+      const bloquesVacios = totalBloques - bloquesLlenos;
+
+      const barra = 'Franck ' + '█'.repeat(bloquesLlenos) + '✈️' + '░'.repeat(bloquesVacios) + ' Punta Cana';
+      document.getElementById('barra').textContent = barra;
+      document.getElementById('porcentaje').textContent = Math.round(progreso * 100);
+    }
+
+    actualizarBarra();
+    setInterval(actualizarBarra, 60000); // Actualiza cada minuto
+  </script>
+
+</body>
+</html>
