@@ -4,32 +4,13 @@
   <meta charset="UTF-8" />
   <title>Barra del Avión - Viaje</title>
   <style>
-    body {
-      font-family: monospace;
-      padding: 20px;
-      background: #f0f0f0;
-    }
-    .barra {
-      font-size: 24px;
-      white-space: pre;
-      margin-top: 10px;
-    }
-    .fechas {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-      font-weight: bold;
-    }
+    body { font-family: monospace; padding: 20px; background: #f0f0f0; }
+    .barra { font-size: 24px; white-space: pre; }
   </style>
 </head>
 <body>
 
   <h2>Viaje Franck → Punta Cana</h2>
-
-  <div class="fechas">
-    <div>Inicio grupo: 18/06/2025</div>
-    <div>SALIDA: 24/09/2025 03:47</div>
-  </div>
 
   <div class="barra" id="barra"></div>
   <div>Progreso: <span id="porcentaje"></span>%</div>
@@ -37,9 +18,10 @@
   <script>
     const totalBloques = 20;
 
-    // Fechas reales
-    const fechaInicio = new Date('2025-06-18T00:00:00');
-    const fechaSalida = new Date('2025-09-24T03:47:00');
+    // Fechas importantes
+    const fechaSalida = new Date('2025-07-10T15:00:00');
+    const fechaInicio = new Date(fechaSalida);
+    fechaInicio.setDate(fechaSalida.getDate() - 30); // 30 días antes
 
     function actualizarBarra() {
       const ahora = new Date();
@@ -60,4 +42,3 @@
 
 </body>
 </html>
-
