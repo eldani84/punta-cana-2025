@@ -1,44 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Barra del Avión - Viaje</title>
-  <style>
-    body { font-family: monospace; padding: 20px; background: #f0f0f0; }
-    .barra { font-size: 24px; white-space: pre; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cuenta regresiva viaje ✈️</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #6dd5fa, #2980b9);
+    color: #fff;
+    text-align: center;
+    padding: 40px;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  h1 {
+    margin-bottom: 10px;
+  }
+  .progress-container {
+    position: relative;
+    width: 80%;
+    max-width: 600px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    margin: 30px auto;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    width: 0%;
+    border-radius: 25px;
+    transition: width 1s ease-in-out;
+    position: relative;
+  }
+  .plane {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    transition: left 1s ease-in-out;
+  }
+  .labels {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .percentage {
+    font-size: 24px;
+    margin-top: 15px;
+    font-weight: 700;
+  }
+</style>
 </head>
 <body>
 
-  <h2>Viaje Franck → Punta Cana</h2>
+<h1>Viaje Franck → Punta Cana</h1>
 
-  <div class="barra" id="barra"></div>
-  <div>Progreso: <span id="porcentaje"></span>%</div>
+<div class="labels">
+  <div>Franck</div>
+  <div>Punta Cana</div>
+</div>
 
-  <script>
-    const totalBloques = 20;
+<div class="progress-container" id="progressContainer">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="plane" id="plane">✈️</div>
+</div>
 
-    // Fechas importantes
-    const fechaSalida = new Date('2025-09-24T15:00:00');
-    const fechaInicio = new Date(fechaSalida);
-    fechaInicio.setDate(fechaSalida.getDate() - 30); // 30 días antes
+<div class="percentage" id="percentage">0%</div>
 
-    function actualizarBarra() {
-      const ahora = new Date();
-      let progreso = (ahora - fechaInicio) / (fechaSalida - fechaInicio);
-      progreso = Math.min(Math.max(progreso, 0), 1);
+<script>
+  const totalWidth = 100; // porcentaje maximo
+  const progressBar = document.getElementById('progressBar');
+  const plane = document.getElementById('plane');
+  const percentageText = document.getElementById('percentage');
+  const progressContainer = document.getElementById('progressContainer');
 
-      const bloquesLlenos = Math.round(progreso * totalBloques);
-      const bloquesVacios = totalBloques - bloquesLlenos;
+  // Fechas
+  const fechaSalida = new Date('2025-07-10T15:00:00');
+  const fechaInicio = new Date(fechaSalida);
+  fechaInicio.setDate(fechaSalida.getDate() - 30);
 
-      const barra = 'Franck ' + '█'.repeat(bloquesLlenos) + '✈️' + '░'.repeat(bloquesVacios) + ' Punta Cana';
-      document.getElementById('barra').textContent = barra;
-      document.getElementById('porcentaje').textContent = Math.round(progreso * 100);
-    }
+  function actualizarProgreso() {
+    const ahora = new Date();
+    let progreso = (ahora - fechaInicio) / (fechaSalida - fechaInicio);
+    progreso = Math.min(Math.max(progreso, 0), 1);
 
-    actualizarBarra();
-    setInterval(actualizarBarra, 60000); // Actualiza cada minuto
-  </script>
+    const porcentaje = Math.round(progreso * 100);
+    percentageText.textContent = porcentaje + '%';
+
+    // Actualizar barra
+    progressBar.style.width = porcentaje + '%';
+
+    // Mover avión (se asegura que no se salga de la barra)
+    const containerWidth = progressContainer.clientWidth;
+    let leftPos = containerWidth * progreso;
+    if (leftPos < 20) leftPos = 20;
+    if (leftPos > containerWidth - 20) leftPos = containerWidth - 20;
+
+    plane.style.left = leftPos + 'px';
+  }
+
+  actualizarProgreso();
+  setInterval(actualizarProgreso, 60000); // actualiza cada minuto
+</script>
 
 </body>
 </html>
+
