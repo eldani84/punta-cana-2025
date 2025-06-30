@@ -4,24 +4,69 @@
   <meta charset="UTF-8" />
   <title>Barra del Avión - Viaje</title>
   <style>
-    body { font-family: monospace; padding: 20px; background: #f0f0f0; }
-    .barra { font-size: 24px; white-space: pre; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f0f0 url('fondo40.png') no-repeat center center;
+      background-size: contain;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    h2 {
+      color: #003366;
+      margin-bottom: 10px;
+    }
+
+    .fechas {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      max-width: 600px;
+      margin: 10px auto;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .barra {
+      font-size: 24px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .progreso {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
 
   <h2>Viaje Franck → Punta Cana</h2>
 
+  <div class="fechas">
+    <div>📅 Inicio: 18/06/2025</div>
+    <div>🚀 SALIDA: 24/09/2025 03:47</div>
+  </div>
+
   <div class="barra" id="barra"></div>
-  <div>Progreso: <span id="porcentaje"></span>%</div>
+  <div class="progreso">Progreso: <span id="porcentaje"></span>%</div>
 
   <script>
     const totalBloques = 20;
 
-    // Fechas importantes
-    const fechaSalida = new Date('2025-07-10T15:00:00');
-    const fechaInicio = new Date(fechaSalida);
-    fechaInicio.setDate(fechaSalida.getDate() - 30); // 30 días antes
+    const fechaInicio = new Date('2025-06-18T00:00:00');
+    const fechaSalida = new Date('2025-09-24T03:47:00');
 
     function actualizarBarra() {
       const ahora = new Date();
@@ -37,7 +82,7 @@
     }
 
     actualizarBarra();
-    setInterval(actualizarBarra, 60000); // Actualiza cada minuto
+    setInterval(actualizarBarra, 60000);
   </script>
 
 </body>
