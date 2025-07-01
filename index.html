@@ -148,42 +148,37 @@
   </div>
 
   <!-- Firebase y lógica -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
-      authDomain: "punta-cana-2025.firebaseapp.com",
-      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
-      projectId: "punta-cana-2025",
-      storageBucket: "punta-cana-2025.firebasestorage.app",
-      messagingSenderId: "1086669062747",
-      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
+    authDomain: "punta-cana-2025.firebaseapp.com",
+    databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
+    projectId: "punta-cana-2025",
+    storageBucket: "punta-cana-2025.firebasestorage.app",
+    messagingSenderId: "1086669062747",
+    appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const listaRef = ref(db, 'lista');
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const listaRef = ref(db, 'lista');
 
-    const lista = document.getElementById('listaViaje');
-    const input = document.getElementById('itemInput');
+  console.log("Firebase cargado:", app !== undefined);
 
-    onValue(listaRef, (snapshot) => {
-      lista.innerHTML = '';
-      const data = snapshot.val();
-      if (data) {
-        Object.entries(data).forEach(([id, item]) => {
-          const li = document.createElement('li');
-          li.className = 'item-viaje' + (item.completado ? ' completado' : '');
-          li.innerHTML = `
-            <span style="cursor:pointer; flex-grow:1;" onclick="toggleCompletado('${id}', ${!item.completado})">${item.texto}</span>
-            <button onclick="eliminarItem('${id}')">🗑️</button>
-          `;
-          lista.appendChild(li);
-        });
-      }
-    });
+  onValue(listaRef, (snap) => {
+    console.log("Valor recibido:", snap.val());
+  });
+
+  window.agregarItem = () => {
+    push(listaRef, { texto: "Prueba", completado: false })
+      .then(() => console.log("Item agregado"))
+      .catch(e => console.error("Error agregando:", e));
+  }
+</script>
+
 
     window.agregarItem = function() {
       const texto = input.value.trim();
