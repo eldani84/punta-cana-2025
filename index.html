@@ -15,13 +15,37 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       text-align: center;
+    }
+
+    .botones {
+      margin-top: 30px;
+    }
+
+    .boton {
+      display: inline-block;
+      background-color: #0077cc;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      margin: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .boton:hover {
+      background-color: #005fa3;
+      transform: scale(1.05);
     }
 
     h2 {
       color: #003366;
       margin-bottom: 10px;
+      margin-top: 20px;
     }
 
     .fechas {
@@ -62,6 +86,12 @@
   </style>
 </head>
 <body>
+
+  <!-- BOTONES SUPERIORES -->
+  <div class="botones">
+    <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica?utm_source=google&utm_medium=organic&utm_campaign=my_business&utm_content=REP" target="_blank" class="boton">🏨 VER HOTEL</a>
+    <a href="https://maps.app.goo.gl/wPWQo7fDAtR6NMkp7" target="_blank" class="boton">🏖️ VER PLAYA</a>
+  </div>
 
   <h2>Viaje Franck → Punta Cana</h2>
 
@@ -120,3 +150,4 @@
 
 </body>
 </html>
+
