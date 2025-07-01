@@ -84,7 +84,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
-    /* Lista dinámica */
     .lista-container {
       margin: 40px auto;
       max-width: 600px;
@@ -137,30 +136,8 @@
       cursor: pointer;
     }
   </style>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
-      authDomain: "punta-cana-2025.firebaseapp.com",
-      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
-      projectId: "punta-cana-2025",
-      storageBucket: "punta-cana-2025.firebasestorage.app",
-      messagingSenderId: "1086669062747",
-      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const listaRef = db.ref('lista');
-  </script>
 </head>
 <body>
-
-  <!-- BOTONES SUPERIORES -->
   <div class="botones">
     <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica" target="_blank" class="boton">🏨 VER HOTEL</a>
     <a href="https://maps.app.goo.gl/wPWQo7fDAtR6NMkp7" target="_blank" class="boton">🏖️ VER PLAYA</a>
@@ -178,7 +155,6 @@
 
   <div id="cuentaRegresiva"></div>
 
-  <!-- LISTA DE COSAS PARA LLEVAR -->
   <div class="lista-container">
     <h3>🧳 Lista de cosas para llevar</h3>
     <input id="itemInput" type="text" placeholder="Ej: Pasaporte, protector solar, malla..." />
@@ -186,11 +162,26 @@
     <ul id="listaViaje" style="list-style: none; padding: 0;"></ul>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
+      authDomain: "punta-cana-2025.firebaseapp.com",
+      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
+      projectId: "punta-cana-2025",
+      storageBucket: "punta-cana-2025.firebasestorage.app",
+      messagingSenderId: "1086669062747",
+      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const listaRef = db.ref('lista');
+
     const lista = document.getElementById('listaViaje');
     const input = document.getElementById('itemInput');
 
-    // Escuchar cambios en Firebase
     listaRef.on('value', (snapshot) => {
       lista.innerHTML = '';
       const data = snapshot.val();
@@ -207,7 +198,6 @@
       }
     });
 
-    // Agregar item
     function agregarItem() {
       const texto = input.value.trim();
       if (!texto) return;
@@ -215,19 +205,16 @@
       input.value = '';
     }
 
-    // Marcar como completado o no
     function toggleCompletado(id, nuevoEstado) {
       listaRef.child(id).update({ completado: nuevoEstado });
     }
 
-    // Eliminar item
     function eliminarItem(id) {
       if (confirm("¿Eliminar este ítem?")) {
         listaRef.child(id).remove();
       }
     }
 
-    // Barra de progreso
     const totalBloques = 20;
     const fechaInicio = new Date('2025-06-18T00:00:00');
     const fechaSalida = new Date('2025-09-24T03:47:00');
@@ -263,7 +250,6 @@
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
   </script>
-
 </body>
 </html>
 
