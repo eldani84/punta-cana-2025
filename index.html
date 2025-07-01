@@ -83,6 +83,59 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
+
+    /* Lista dinámica */
+    .lista-container {
+      margin: 40px auto;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .lista-container input {
+      padding: 10px;
+      width: 60%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .lista-container button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .item-viaje {
+      background: #fff;
+      margin: 6px 0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .item-viaje.completado {
+      background-color: #e0ffe0;
+      text-decoration: line-through;
+      color: #555;
+    }
+
+    .item-viaje button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -105,9 +158,16 @@
 
   <div id="cuentaRegresiva"></div>
 
+  <!-- LISTA DE COSAS PARA LLEVAR -->
+  <div class="lista-container">
+    <h3>🧳 Lista de cosas para llevar</h3>
+    <input id="itemInput" type="text" placeholder="Ej: Pasaporte, protector solar, malla..." />
+    <button onclick="agregarItem()">➕ Agregar</button>
+    <ul id="listaViaje" style="list-style: none; padding: 0;"></ul>
+  </div>
+
   <script>
     const totalBloques = 20;
-
     const fechaInicio = new Date('2025-06-18T00:00:00');
     const fechaSalida = new Date('2025-09-24T03:47:00');
 
@@ -115,11 +175,9 @@
       const ahora = new Date();
       let progreso = (ahora - fechaInicio) / (fechaSalida - fechaInicio);
       progreso = Math.min(Math.max(progreso, 0), 1);
-
-      const bloquesLlenos = Math.round(progreso * totalBloques);
-      const bloquesVacios = totalBloques - bloquesLlenos;
-
-      const barra = 'Franck ' + '█'.repeat(bloquesLlenos) + '✈️' + '░'.repeat(bloquesVacios) + ' Punta Cana';
+      const llenos = Math.round(progreso * totalBloques);
+      const vacios = totalBloques - llenos;
+      const barra = 'Franck ' + '█'.repeat(llenos) + '✈️' + '░'.repeat(vacios) + ' Punta Cana';
       document.getElementById('barra').textContent = barra;
       document.getElementById('porcentaje').textContent = Math.round(progreso * 100);
     }
@@ -127,27 +185,79 @@
     function actualizarCuentaRegresiva() {
       const ahora = new Date();
       const diferencia = fechaSalida - ahora;
-
       if (diferencia <= 0) {
         document.getElementById('cuentaRegresiva').textContent = "¡Ya es hora de partir!";
         return;
       }
-
       const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
       const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
       const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
       const segundos = Math.floor((diferencia / 1000) % 60);
-
       document.getElementById('cuentaRegresiva').textContent =
         `⏳ Faltan ${dias} días, ${horas}h ${minutos}m ${segundos}s`;
+    }
+
+    // -------- LISTA DINÁMICA + localStorage ----------
+    const lista = document.getElementById('listaViaje');
+    const input = document.getElementById('itemInput');
+
+    function guardarLista() {
+      const items = [];
+      document.querySelectorAll('.item-viaje').forEach(item => {
+        items.push({
+          texto: item.querySelector('span').textContent,
+          completado: item.classList.contains('completado')
+        });
+      });
+      localStorage.setItem('listaViaje', JSON.stringify(items));
+    }
+
+    function cargarLista() {
+      const datos = localStorage.getItem('listaViaje');
+      if (!datos) return;
+      const items = JSON.parse(datos);
+      items.forEach(obj => {
+        const li = document.createElement('li');
+        li.className = 'item-viaje';
+        if (obj.completado) li.classList.add('completado');
+        li.innerHTML = `
+          <span onclick="toggleCompletado(this)" style="cursor: pointer; flex-grow: 1;">${obj.texto}</span>
+          <button onclick="eliminarItem(this)">🗑️</button>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    function agregarItem() {
+      const texto = input.value.trim();
+      if (texto === '') return;
+      const li = document.createElement('li');
+      li.className = 'item-viaje';
+      li.innerHTML = `
+        <span onclick="toggleCompletado(this)" style="cursor: pointer; flex-grow: 1;">${texto}</span>
+        <button onclick="eliminarItem(this)">🗑️</button>
+      `;
+      lista.appendChild(li);
+      input.value = '';
+      guardarLista();
+    }
+
+    function toggleCompletado(span) {
+      span.parentElement.classList.toggle('completado');
+      guardarLista();
+    }
+
+    function eliminarItem(boton) {
+      boton.parentElement.remove();
+      guardarLista();
     }
 
     actualizarBarra();
     actualizarCuentaRegresiva();
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
+    cargarLista();
   </script>
 
 </body>
 </html>
-
