@@ -137,28 +137,27 @@
       cursor: pointer;
     }
   </style>
-  <!-- Firebase App (núcleo) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<!-- Firebase Realtime Database -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
-<script>
-  // 🔑 ESTO LO TENÉS QUE CAMBIAR POR TU PROPIO CONFIG
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
-    authDomain: "punta-cana-2025.firebaseapp.com",
-    databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
-    projectId: "punta-cana-2025",
-    storageBucket: "punta-cana-2025.firebasestorage.app",
-    messagingSenderId: "1086669062747",
-    appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
-  };
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
-  // Inicializar Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
+  <script>
+    // Configuración Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
+      authDomain: "punta-cana-2025.firebaseapp.com",
+      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
+      projectId: "punta-cana-2025",
+      storageBucket: "punta-cana-2025.firebasestorage.app",
+      messagingSenderId: "1086669062747",
+      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
+    };
 
+    // Inicializar Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
 </head>
 <body>
 
@@ -189,6 +188,7 @@
   </div>
 
   <script>
+    // Variables del viaje
     const totalBloques = 20;
     const fechaInicio = new Date('2025-06-18T00:00:00');
     const fechaSalida = new Date('2025-09-24T03:47:00');
@@ -219,66 +219,76 @@
         `⏳ Faltan ${dias} días, ${horas}h ${minutos}m ${segundos}s`;
     }
 
-    // -------- LISTA DINÁMICA + localStorage ----------
-    const lista = document.getElementById('listaViaje');
-    const input = document.getElementById('itemInput');
+    // Referencia a la lista en Firebase
+    const listaRef = db.ref('lista');
 
-    function guardarLista() {
-      const items = [];
-      document.querySelectorAll('.item-viaje').forEach(item => {
-        items.push({
-          texto: item.querySelector('span').textContent,
-          completado: item.classList.contains('completado')
-        });
-      });
-      localStorage.setItem('listaViaje', JSON.stringify(items));
-    }
+    // Leer la lista en tiempo real y mostrar
+    listaRef.on('value', (snapshot) => {
+      const lista = snapshot.val() || {};
+      const listaViaje = document.getElementById('listaViaje');
+      listaViaje.innerHTML = '';
 
-    function cargarLista() {
-      const datos = localStorage.getItem('listaViaje');
-      if (!datos) return;
-      const items = JSON.parse(datos);
-      items.forEach(obj => {
-        const li = document.createElement('li');
-        li.className = 'item-viaje';
-        if (obj.completado) li.classList.add('completado');
-        li.innerHTML = `
-          <span onclick="toggleCompletado(this)" style="cursor: pointer; flex-grow: 1;">${obj.texto}</span>
-          <button onclick="eliminarItem(this)">🗑️</button>
-        `;
-        lista.appendChild(li);
-      });
-    }
+      for (const key in lista) {
+        if (lista.hasOwnProperty(key)) {
+          const item = lista[key];
 
+          const li = document.createElement('li');
+          li.className = 'item-viaje' + (item.completado ? ' completado' : '');
+          li.setAttribute('data-key', key);
+
+          const span = document.createElement('span');
+          span.textContent = item.texto;
+          span.style.cursor = 'pointer';
+          span.style.flexGrow = '1';
+          span.onclick = () => {
+            toggleCompletado(key, !item.completado);
+          };
+
+          const btnEliminar = document.createElement('button');
+          btnEliminar.textContent = '🗑️';
+          btnEliminar.onclick = () => {
+            eliminarItem(key);
+          };
+
+          li.appendChild(span);
+          li.appendChild(btnEliminar);
+          listaViaje.appendChild(li);
+        }
+      }
+    });
+
+    // Agregar item a Firebase
     function agregarItem() {
+      const input = document.getElementById('itemInput');
       const texto = input.value.trim();
-      if (texto === '') return;
-      const li = document.createElement('li');
-      li.className = 'item-viaje';
-      li.innerHTML = `
-        <span onclick="toggleCompletado(this)" style="cursor: pointer; flex-grow: 1;">${texto}</span>
-        <button onclick="eliminarItem(this)">🗑️</button>
-      `;
-      lista.appendChild(li);
+      if (!texto) return alert('Por favor, escribí algo para agregar.');
+
+      // Push agrega un nodo nuevo con ID único
+      listaRef.push({
+        texto: texto,
+        completado: false
+      });
+
       input.value = '';
-      guardarLista();
     }
 
-    function toggleCompletado(span) {
-      span.parentElement.classList.toggle('completado');
-      guardarLista();
+    // Marcar item completado/no completado
+    function toggleCompletado(key, completado) {
+      listaRef.child(key).update({ completado: completado });
     }
 
-    function eliminarItem(boton) {
-      boton.parentElement.remove();
-      guardarLista();
+    // Eliminar item de Firebase
+    function eliminarItem(key) {
+      if (confirm('¿Querés eliminar este ítem?')) {
+        listaRef.child(key).remove();
+      }
     }
 
+    // Inicializamos barra y cuenta regresiva
     actualizarBarra();
     actualizarCuentaRegresiva();
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
-    cargarLista();
   </script>
 
 </body>
