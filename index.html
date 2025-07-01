@@ -141,22 +141,6 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
-      authDomain: "punta-cana-2025.firebaseapp.com",
-      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
-      projectId: "punta-cana-2025",
-      storageBucket: "punta-cana-2025.firebasestorage.app",
-      messagingSenderId: "1086669062747",
-      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const listaRef = db.ref('lista');
-  </script>
 </head>
 <body>
 
@@ -187,10 +171,27 @@
   </div>
 
   <script>
+    // Configuración Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
+      authDomain: "punta-cana-2025.firebaseapp.com",
+      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
+      projectId: "punta-cana-2025",
+      storageBucket: "punta-cana-2025.firebasestorage.app",
+      messagingSenderId: "1086669062747",
+      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
+    };
+
+    // Inicializar Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const listaRef = db.ref('lista');
+
+    // Elementos DOM
     const lista = document.getElementById('listaViaje');
     const input = document.getElementById('itemInput');
 
-    // Escuchar cambios en Firebase
+    // Escuchar cambios en Firebase y mostrar la lista
     listaRef.on('value', (snapshot) => {
       lista.innerHTML = '';
       const data = snapshot.val();
@@ -198,16 +199,16 @@
         Object.entries(data).forEach(([id, item]) => {
           const li = document.createElement('li');
           li.className = 'item-viaje' + (item.completado ? ' completado' : '');
-          li.innerHTML = 
+          li.innerHTML = `
             <span style="cursor:pointer; flex-grow:1;" onclick="toggleCompletado('${id}', ${!item.completado})">${item.texto}</span>
             <button onclick="eliminarItem('${id}')">🗑️</button>
-          ;
+          `;
           lista.appendChild(li);
         });
       }
     });
 
-    // Agregar item
+    // Función para agregar ítem
     function agregarItem() {
       const texto = input.value.trim();
       if (!texto) return;
@@ -215,19 +216,19 @@
       input.value = '';
     }
 
-    // Marcar como completado o no
+    // Marcar ítem como completado o no
     function toggleCompletado(id, nuevoEstado) {
       listaRef.child(id).update({ completado: nuevoEstado });
     }
 
-    // Eliminar item
+    // Eliminar ítem
     function eliminarItem(id) {
       if (confirm("¿Eliminar este ítem?")) {
         listaRef.child(id).remove();
       }
     }
 
-    // Barra de progreso
+    // Barra de progreso y cuenta regresiva
     const totalBloques = 20;
     const fechaInicio = new Date('2025-06-18T00:00:00');
     const fechaSalida = new Date('2025-09-24T03:47:00');
@@ -254,16 +255,15 @@
       const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
       const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
       const segundos = Math.floor((diferencia / 1000) % 60);
-      
       document.getElementById('cuentaRegresiva').textContent =
         `⏳ Faltan ${dias} días, ${horas}h ${minutos}m ${segundos}s`;
-
     }
 
+    // Inicialización de funciones
     actualizarBarra();
     actualizarCuentaRegresiva();
-    setInterval(actualizarBarra, 60000);
-    setInterval(actualizarCuentaRegresiva, 1000);
+    setInterval(actualizarBarra, 60000); // Actualiza cada minuto
+    setInterval(actualizarCuentaRegresiva, 1000); // Actualiza cada segundo
   </script>
 
 </body>
