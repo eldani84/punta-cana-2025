@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Barra del Avión - Viaje</title>
   <style>
+    /* Estilos iguales a los tuyos originales */
     body {
       margin: 0;
       padding: 0;
@@ -19,10 +20,7 @@
       text-align: center;
     }
 
-    .botones {
-      margin-top: 30px;
-    }
-
+    .botones { margin-top: 30px; }
     .boton {
       display: inline-block;
       background-color: #0077cc;
@@ -37,17 +35,8 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .boton:hover {
-      background-color: #005fa3;
-      transform: scale(1.05);
-    }
-
-    h2 {
-      color: #003366;
-      margin-bottom: 10px;
-      margin-top: 20px;
-    }
-
+    .boton:hover { background-color: #005fa3; transform: scale(1.05); }
+    h2 { color: #003366; margin: 20px 0 10px; }
     .fechas {
       display: flex;
       justify-content: space-between;
@@ -67,12 +56,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .progreso {
-      margin-top: 10px;
-      font-size: 18px;
-      color: #555;
-    }
-
+    .progreso { margin-top: 10px; font-size: 18px; color: #555; }
     #cuentaRegresiva {
       margin-top: 30px;
       font-size: 32px;
@@ -138,6 +122,7 @@
   </style>
 </head>
 <body>
+
   <div class="botones">
     <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica" target="_blank" class="boton">🏨 VER HOTEL</a>
     <a href="https://maps.app.goo.gl/wPWQo7fDAtR6NMkp7" target="_blank" class="boton">🏖️ VER PLAYA</a>
@@ -162,27 +147,29 @@
     <ul id="listaViaje" style="list-style: none; padding: 0;"></ul>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-  <script>
+  <!-- Firebase y lógica -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
       authDomain: "punta-cana-2025.firebaseapp.com",
       databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
       projectId: "punta-cana-2025",
-      storageBucket: "punta-cana-2025.firebasestorage.app",
+      storageBucket: "punta-cana-2025.appspot.com",
       messagingSenderId: "1086669062747",
       appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const listaRef = db.ref('lista');
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const listaRef = ref(db, 'lista');
 
     const lista = document.getElementById('listaViaje');
     const input = document.getElementById('itemInput');
 
-    listaRef.on('value', (snapshot) => {
+    onValue(listaRef, (snapshot) => {
       lista.innerHTML = '';
       const data = snapshot.val();
       if (data) {
@@ -198,23 +185,24 @@
       }
     });
 
-    function agregarItem() {
+    window.agregarItem = function() {
       const texto = input.value.trim();
       if (!texto) return;
-      listaRef.push({ texto: texto, completado: false });
+      push(listaRef, { texto: texto, completado: false });
       input.value = '';
     }
 
-    function toggleCompletado(id, nuevoEstado) {
-      listaRef.child(id).update({ completado: nuevoEstado });
+    window.toggleCompletado = function(id, nuevoEstado) {
+      update(ref(db, 'lista/' + id), { completado: nuevoEstado });
     }
 
-    function eliminarItem(id) {
+    window.eliminarItem = function(id) {
       if (confirm("¿Eliminar este ítem?")) {
-        listaRef.child(id).remove();
+        remove(ref(db, 'lista/' + id));
       }
     }
 
+    // Barra y cuenta regresiva
     const totalBloques = 20;
     const fechaInicio = new Date('2025-06-18T00:00:00');
     const fechaSalida = new Date('2025-09-24T03:47:00');
@@ -246,10 +234,4 @@
     }
 
     actualizarBarra();
-    actualizarCuentaRegresiva();
-    setInterval(actualizarBarra, 60000);
-    setInterval(actualizarCuentaRegresiva, 1000);
-  </script>
-</body>
-</html>
-
+    actualizarCuentaRegresiva(
