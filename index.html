@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Barra del Avión - Viaje</title>
   <style>
-    /* Estilos iguales a los tuyos originales */
     body {
       margin: 0;
       padding: 0;
@@ -20,7 +19,10 @@
       text-align: center;
     }
 
-    .botones { margin-top: 30px; }
+    .botones {
+      margin-top: 30px;
+    }
+
     .boton {
       display: inline-block;
       background-color: #0077cc;
@@ -35,8 +37,17 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .boton:hover { background-color: #005fa3; transform: scale(1.05); }
-    h2 { color: #003366; margin: 20px 0 10px; }
+    .boton:hover {
+      background-color: #005fa3;
+      transform: scale(1.05);
+    }
+
+    h2 {
+      color: #003366;
+      margin-bottom: 10px;
+      margin-top: 20px;
+    }
+
     .fechas {
       display: flex;
       justify-content: space-between;
@@ -56,7 +67,12 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .progreso { margin-top: 10px; font-size: 18px; color: #555; }
+    .progreso {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #555;
+    }
+
     #cuentaRegresiva {
       margin-top: 30px;
       font-size: 32px;
@@ -68,6 +84,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
+    /* Lista dinámica */
     .lista-container {
       margin: 40px auto;
       max-width: 600px;
@@ -120,9 +137,30 @@
       cursor: pointer;
     }
   </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
+      authDomain: "punta-cana-2025.firebaseapp.com",
+      databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
+      projectId: "punta-cana-2025",
+      storageBucket: "punta-cana-2025.firebasestorage.app",
+      messagingSenderId: "1086669062747",
+      appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const listaRef = db.ref('lista');
+  </script>
 </head>
 <body>
 
+  <!-- BOTONES SUPERIORES -->
   <div class="botones">
     <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica" target="_blank" class="boton">🏨 VER HOTEL</a>
     <a href="https://maps.app.goo.gl/wPWQo7fDAtR6NMkp7" target="_blank" class="boton">🏖️ VER PLAYA</a>
@@ -140,6 +178,7 @@
 
   <div id="cuentaRegresiva"></div>
 
+  <!-- LISTA DE COSAS PARA LLEVAR -->
   <div class="lista-container">
     <h3>🧳 Lista de cosas para llevar</h3>
     <input id="itemInput" type="text" placeholder="Ej: Pasaporte, protector solar, malla..." />
@@ -147,57 +186,48 @@
     <ul id="listaViaje" style="list-style: none; padding: 0;"></ul>
   </div>
 
-  <!-- Firebase y lógica -->
- <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  <script>
+    const lista = document.getElementById('listaViaje');
+    const input = document.getElementById('itemInput');
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhImoz_s031XbnBoI5Kor8TtjTZ_0JXHs",
-    authDomain: "punta-cana-2025.firebaseapp.com",
-    databaseURL: "https://punta-cana-2025-default-rtdb.firebaseio.com",
-    projectId: "punta-cana-2025",
-    storageBucket: "punta-cana-2025.firebasestorage.app",
-    messagingSenderId: "1086669062747",
-    appId: "1:1086669062747:web:eda84a16874eb19b82f57e"
-  };
+    // Escuchar cambios en Firebase
+    listaRef.on('value', (snapshot) => {
+      lista.innerHTML = '';
+      const data = snapshot.val();
+      if (data) {
+        Object.entries(data).forEach(([id, item]) => {
+          const li = document.createElement('li');
+          li.className = 'item-viaje' + (item.completado ? ' completado' : '');
+          li.innerHTML = 
+            <span style="cursor:pointer; flex-grow:1;" onclick="toggleCompletado('${id}', ${!item.completado})">${item.texto}</span>
+            <button onclick="eliminarItem('${id}')">🗑️</button>
+          ;
+          lista.appendChild(li);
+        });
+      }
+    });
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const listaRef = ref(db, 'lista');
-
-  console.log("Firebase cargado:", app !== undefined);
-
-  onValue(listaRef, (snap) => {
-    console.log("Valor recibido:", snap.val());
-  });
-
-  window.agregarItem = () => {
-    push(listaRef, { texto: "Prueba", completado: false })
-      .then(() => console.log("Item agregado"))
-      .catch(e => console.error("Error agregando:", e));
-  }
-</script>
-
-
-    window.agregarItem = function() {
+    // Agregar item
+    function agregarItem() {
       const texto = input.value.trim();
       if (!texto) return;
-      push(listaRef, { texto: texto, completado: false });
+      listaRef.push({ texto: texto, completado: false });
       input.value = '';
     }
 
-    window.toggleCompletado = function(id, nuevoEstado) {
-      update(ref(db, 'lista/' + id), { completado: nuevoEstado });
+    // Marcar como completado o no
+    function toggleCompletado(id, nuevoEstado) {
+      listaRef.child(id).update({ completado: nuevoEstado });
     }
 
-    window.eliminarItem = function(id) {
+    // Eliminar item
+    function eliminarItem(id) {
       if (confirm("¿Eliminar este ítem?")) {
-        remove(ref(db, 'lista/' + id));
+        listaRef.child(id).remove();
       }
     }
 
-    // Barra y cuenta regresiva
+    // Barra de progreso
     const totalBloques = 20;
     const fechaInicio = new Date('2025-06-18T00:00:00');
     const fechaSalida = new Date('2025-09-24T03:47:00');
@@ -225,8 +255,14 @@
       const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
       const segundos = Math.floor((diferencia / 1000) % 60);
       document.getElementById('cuentaRegresiva').textContent =
-        `⏳ Faltan ${dias} días, ${horas}h ${minutos}m ${segundos}s`;
+        ⏳ Faltan ${dias} días, ${horas}h ${minutos}m ${segundos}s;
     }
 
     actualizarBarra();
-    actualizarCuentaRegresiva(
+    actualizarCuentaRegresiva();
+    setInterval(actualizarBarra, 60000);
+    setInterval(actualizarCuentaRegresiva, 1000);
+  </script>
+
+</body>
+</html>
