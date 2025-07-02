@@ -5,19 +5,6 @@
   <title>Barra del Avión - Viaje</title>
   <style>
     body {
-#infoClima {
-  position: fixed;
-  top: 10px;
-  right: 20px;
-  background: rgba(255,255,255,0.85);
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  z-index: 1000;
-}
-
-      
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -30,6 +17,18 @@
       align-items: center;
       justify-content: flex-start;
       text-align: center;
+    }
+
+    #infoClima {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      background: rgba(255,255,255,0.85);
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 1000;
     }
 
     .botones {
@@ -97,29 +96,66 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
+    /* LISTA EN CAJA COMPACTA */
     .lista-container {
       margin: 40px auto;
       max-width: 600px;
       width: 90%;
-      text-align: center;
+      text-align: left;
+
+      background: #fff;
+      border-radius: 15px;
+      padding: 20px 25px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      box-sizing: border-box;
+    }
+
+    #listaViaje {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-left: 0;
+      margin-top: 15px;
+      scrollbar-width: thin;
+      scrollbar-color: #0077cc #f0f0f0;
+    }
+    /* Scrollbar para navegadores basados en Webkit (Chrome, Edge, Safari) */
+    #listaViaje::-webkit-scrollbar {
+      width: 8px;
+    }
+    #listaViaje::-webkit-scrollbar-track {
+      background: #f0f0f0;
+      border-radius: 10px;
+    }
+    #listaViaje::-webkit-scrollbar-thumb {
+      background-color: #0077cc;
+      border-radius: 10px;
+      border: 2px solid #f0f0f0;
     }
 
     .lista-container input {
       padding: 10px;
-      width: 60%;
+      width: calc(100% - 100px);
       border-radius: 8px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
+      margin-bottom: 10px;
     }
 
     .lista-container button {
-      padding: 10px 16px;
+      width: 80px;
+      padding: 10px 0;
       border-radius: 8px;
       background-color: #28a745;
       color: white;
       border: none;
       font-weight: bold;
       cursor: pointer;
-      margin-left: 8px;
+      margin-left: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .lista-container button:hover {
+      background-color: #218838;
     }
 
     .item-viaje {
@@ -132,6 +168,7 @@
       justify-content: space-between;
       align-items: center;
       transition: background 0.3s;
+      cursor: default;
     }
 
     .item-viaje.completado {
@@ -147,13 +184,18 @@
       border-radius: 5px;
       padding: 5px 10px;
       cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .item-viaje button:hover {
+      background-color: #c82333;
     }
   </style>
 </head>
 <body>
-<div id="infoClima">
-  🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
-</div>
+  <div id="infoClima">
+    🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
+  </div>
 
   <!-- BOTONES SUPERIORES -->
   <div class="botones">
@@ -270,32 +312,34 @@
     actualizarCuentaRegresiva();
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
-    
-    // Reemplazá con tu API key de OpenWeatherMap
-const API_KEY = "d011981d00cc64b6e856b683d20319d5";
-const ciudad = "Punta Cana";
-const pais = "DO"; // República Dominicana
 
-function obtenerClima() {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${API_KEY}&units=metric&lang=es`;
+    // Clima
+    const API_KEY = "d011981d00cc64b6e856b683d20319d5";
+    const ciudad = "Punta Cana";
+    const pais = "DO";
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      const temp = data.main.temp;
-      const desc = data.weather[0].description;
-      document.getElementById('temp').textContent = temp.toFixed(1);
-      document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
-    })
-    .catch(error => {
-      document.getElementById('clima').textContent = "No se pudo cargar el clima.";
-      console.error("Error obteniendo el clima:", error);
-    });
-}
+    function obtenerClima() {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${API_KEY}&units=metric&lang=es`;
 
-obtenerClima();
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("Respuesta no válida");
+          return response.json();
+        })
+        .then(data => {
+          const temp = data.main.temp;
+          const desc = data.weather[0].description;
+          document.getElementById('temp').textContent = temp.toFixed(1);
+          document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
+        })
+        .catch(error => {
+          document.getElementById('infoClima').textContent = "⚠️ No se pudo cargar el clima.";
+          console.error("Error al obtener clima:", error);
+        });
+    }
+
+    obtenerClima();
 
   </script>
-
 </body>
 </html>
