@@ -19,7 +19,7 @@
       text-align: center;
     }
 
-      #infoClima {
+    #infoClima {
       position: fixed;
       top: 10px;
       right: 20px;
@@ -34,7 +34,7 @@
 
     #conversorMoneda {
       position: fixed;
-      top: 70px; /* justo debajo del clima */
+      top: 70px;
       right: 20px;
       background: rgba(255,255,255,0.85);
       padding: 10px 12px;
@@ -46,7 +46,6 @@
       font-family: 'Segoe UI', sans-serif;
     }
 
-    /* estilos botones y selects acorde con diseño */
     #conversorMoneda select,
     #conversorMoneda input {
       font-size: 10px;
@@ -81,7 +80,6 @@
       min-height: 18px;
       color: #003366;
     }
-
 
     .botones {
       margin-top: 30px;
@@ -148,13 +146,11 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
-    /* LISTA EN CAJA COMPACTA */
     .lista-container {
       margin: 40px auto;
       max-width: 600px;
       width: 90%;
       text-align: left;
-
       background: #fff;
       border-radius: 15px;
       padding: 20px 25px;
@@ -170,7 +166,7 @@
       scrollbar-width: thin;
       scrollbar-color: #0077cc #f0f0f0;
     }
-    /* Scrollbar para navegadores basados en Webkit (Chrome, Edge, Safari) */
+
     #listaViaje::-webkit-scrollbar {
       width: 8px;
     }
@@ -210,20 +206,19 @@
       background-color: #218838;
     }
 
-.item-viaje {
-  font-size: 12px; /* tamaño más pequeño */
-  background: #fff;
-  margin: 6px 0;
-  padding: 10px 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background 0.3s;
-  cursor: default;
-}
-
+    .item-viaje {
+      font-size: 12px;
+      background: #fff;
+      margin: 6px 0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+      cursor: default;
+    }
 
     .item-viaje.completado {
       background-color: #e0ffe0;
@@ -244,35 +239,32 @@
     .item-viaje button:hover {
       background-color: #c82333;
     }
-    
   </style>
 </head>
 <body>
-<div id="infoClima">
+  <div id="infoClima">
     🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
   </div>
 
   <div id="conversorMoneda">
     <div><strong>Conversor de Moneda</strong></div>
-    <select id="monedaOrigen" title="Moneda origen">
+    <select id="monedaOrigen">
       <option value="ARS">ARS</option>
       <option value="USD" selected>USD</option>
       <option value="EUR">EUR</option>
       <option value="DOP">DOP</option>
     </select>
-    <select id="monedaDestino" title="Moneda destino">
+    <select id="monedaDestino">
       <option value="USD">USD</option>
       <option value="ARS">ARS</option>
       <option value="EUR">EUR</option>
       <option value="DOP" selected>DOP</option>
     </select>
-
-    <input type="number" id="cantidad" value="1" min="0" step="any" title="Cantidad" placeholder="Cantidad" />
-
+    <input type="number" id="cantidad" value="1" min="0" step="any" />
     <button id="convertirBtn">Convertir</button>
     <div id="resultado"></div>
   </div>
-  <!-- BOTONES SUPERIORES -->
+
   <div class="botones">
     <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica" target="_blank" class="boton">🏨 VER HOTEL</a>
     <a href="https://maps.app.goo.gl/wPWQo7fDAtR6NMkp7" target="_blank" class="boton">🏖️ VER PLAYA</a>
@@ -290,7 +282,6 @@
 
   <div id="cuentaRegresiva"></div>
 
-  <!-- LISTA DE COSAS PARA LLEVAR -->
   <div class="lista-container">
     <h3>🧳 Lista de cosas para llevar</h3>
     <input id="itemInput" type="text" placeholder="Ej: Pasaporte, protector solar, malla..." />
@@ -298,7 +289,6 @@
     <ul id="listaViaje" style="list-style: none; padding: 0;"></ul>
   </div>
 
-  <!-- Firebase + lógica -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -388,7 +378,6 @@
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
 
- // Clima (tu código ya existente)
     const API_KEY = "d011981d00cc64b6e856b683d20319d5";
     const ciudad = "Punta Cana";
     const pais = "DO";
@@ -401,45 +390,5 @@
           const temp = data.main.temp;
           const desc = data.weather[0].description;
           document.getElementById('temp').textContent = temp.toFixed(1);
-          document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
-        })
-        .catch(() => {
-          document.getElementById('temp').textContent = "--";
-          document.getElementById('desc').textContent = "No disponible";
-        });
-    }
-    obtenerClima();
+          document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slic
 
-    // Conversor de moneda
-    const btn = document.getElementById('convertirBtn');
-    const resultado = document.getElementById('resultado');
-
-    btn.addEventListener('click', () => {
-      const from = document.getElementById('monedaOrigen').value;
-      const to = document.getElementById('monedaDestino').value;
-      const amount = parseFloat(document.getElementById('cantidad').value);
-
-      if (isNaN(amount) || amount <= 0) {
-        resultado.textContent = 'Ingresa una cantidad válida.';
-        return;
-      }
-
-      resultado.textContent = 'Convirtiendo...';
-
-      fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`)
-        .then(res => res.json())
-        .then(data => {
-          if(data.result) {
-            resultado.textContent = `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
-          } else {
-            resultado.textContent = 'Error al obtener la conversión.';
-          }
-        })
-        .catch(() => {
-          resultado.textContent = 'No se pudo conectar con el servicio.';
-        });
-    }
-    });
-  </script>
-</body>
-</html>
