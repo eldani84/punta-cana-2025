@@ -29,56 +29,6 @@
       font-size: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       z-index: 1000;
-      width: 200px;
-    }
-
-    #conversorMoneda {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      background: rgba(255,255,255,0.85);
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 1000;
-      width: 200px;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    #conversorMoneda select,
-    #conversorMoneda input {
-      font-size: 10px;
-      padding: 4px 6px;
-      margin-top: 4px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      width: 45%;
-      box-sizing: border-box;
-    }
-
-    #conversorMoneda button {
-      font-size: 10px;
-      padding: 6px 10px;
-      margin-top: 8px;
-      border: none;
-      border-radius: 8px;
-      background-color: #0077cc;
-      color: white;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s;
-    }
-
-    #conversorMoneda button:hover {
-      background-color: #005fa3;
-    }
-
-    #resultado {
-      margin-top: 8px;
-      font-weight: bold;
-      min-height: 18px;
-      color: #003366;
     }
 
     .botones {
@@ -146,11 +96,13 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
+    /* LISTA EN CAJA COMPACTA */
     .lista-container {
       margin: 40px auto;
       max-width: 600px;
       width: 90%;
       text-align: left;
+
       background: #fff;
       border-radius: 15px;
       padding: 20px 25px;
@@ -166,7 +118,7 @@
       scrollbar-width: thin;
       scrollbar-color: #0077cc #f0f0f0;
     }
-
+    /* Scrollbar para navegadores basados en Webkit (Chrome, Edge, Safari) */
     #listaViaje::-webkit-scrollbar {
       width: 8px;
     }
@@ -206,19 +158,20 @@
       background-color: #218838;
     }
 
-    .item-viaje {
-      font-size: 12px;
-      background: #fff;
-      margin: 6px 0;
-      padding: 10px 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.3s;
-      cursor: default;
-    }
+.item-viaje {
+  font-size: 12px; /* tamaño más pequeño */
+  background: #fff;
+  margin: 6px 0;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s;
+  cursor: default;
+}
+
 
     .item-viaje.completado {
       background-color: #e0ffe0;
@@ -246,25 +199,7 @@
     🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
   </div>
 
-  <div id="conversorMoneda">
-    <div><strong>Conversor de Moneda</strong></div>
-    <select id="monedaOrigen">
-      <option value="ARS">ARS</option>
-      <option value="USD" selected>USD</option>
-      <option value="EUR">EUR</option>
-      <option value="DOP">DOP</option>
-    </select>
-    <select id="monedaDestino">
-      <option value="USD">USD</option>
-      <option value="ARS">ARS</option>
-      <option value="EUR">EUR</option>
-      <option value="DOP" selected>DOP</option>
-    </select>
-    <input type="number" id="cantidad" value="1" min="0" step="any" />
-    <button id="convertirBtn">Convertir</button>
-    <div id="resultado"></div>
-  </div>
-
+  <!-- BOTONES SUPERIORES -->
   <div class="botones">
     <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica" target="_blank" class="boton">🏨 VER HOTEL</a>
     <a href="https://maps.app.goo.gl/wPWQo7fDAtR6NMkp7" target="_blank" class="boton">🏖️ VER PLAYA</a>
@@ -282,6 +217,7 @@
 
   <div id="cuentaRegresiva"></div>
 
+  <!-- LISTA DE COSAS PARA LLEVAR -->
   <div class="lista-container">
     <h3>🧳 Lista de cosas para llevar</h3>
     <input id="itemInput" type="text" placeholder="Ej: Pasaporte, protector solar, malla..." />
@@ -289,6 +225,7 @@
     <ul id="listaViaje" style="list-style: none; padding: 0;"></ul>
   </div>
 
+  <!-- Firebase + lógica -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -378,17 +315,27 @@
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
 
+    // Clima
     const API_KEY = "d011981d00cc64b6e856b683d20319d5";
     const ciudad = "Punta Cana";
     const pais = "DO";
 
     function obtenerClima() {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${API_KEY}&units=metric&lang=es`;
+
       fetch(url)
-        .then(res => res.json())
+        .then(response => {
+          if (!response.ok) throw new Error("Respuesta no válida");
+          return response.json();
+        })
         .then(data => {
           const temp = data.main.temp;
           const desc = data.weather[0].description;
           document.getElementById('temp').textContent = temp.toFixed(1);
-          document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slic
-
+          document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
+        })
+        .catch(error => {
+          document.getElementById('infoClima').textContent = "⚠️ No se pudo cargar el clima.";
+          console.error("Error al obtener clima:", error);
+        });
+    }
