@@ -96,46 +96,42 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
-    /* LISTA EN CAJA COMPACTA */
     .lista-container {
       margin: 40px auto;
       max-width: 600px;
       width: 90%;
-      text-align: left;
-
+      text-align: center;
       background: #fff;
-      border-radius: 15px;
-      padding: 20px 25px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-      box-sizing: border-box;
-    }
-
-    #listaViaje {
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       max-height: 300px;
       overflow-y: auto;
-      padding-left: 0;
-      margin-top: 15px;
+    }
+
+    .lista-container h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
     }
 
     .lista-container input {
       padding: 10px;
-      width: calc(100% - 100px);
+      width: 60%;
       border-radius: 8px;
       border: 1px solid #ccc;
-      box-sizing: border-box;
-      margin-bottom: 10px;
+      font-size: 14px;
     }
 
     .lista-container button {
-      width: 80px;
-      padding: 10px 0;
+      padding: 10px 16px;
       border-radius: 8px;
       background-color: #28a745;
       color: white;
       border: none;
       font-weight: bold;
       cursor: pointer;
-      margin-left: 10px;
+      margin-left: 8px;
+      font-size: 14px;
       transition: background-color 0.3s;
     }
 
@@ -144,6 +140,7 @@
     }
 
     .item-viaje {
+      font-size: 14px;  /* Aquí achicamos la letra */
       background: #fff;
       margin: 6px 0;
       padding: 10px 15px;
@@ -169,18 +166,20 @@
       border-radius: 5px;
       padding: 5px 10px;
       cursor: pointer;
+      font-size: 14px;
       transition: background-color 0.3s;
     }
 
     .item-viaje button:hover {
       background-color: #c82333;
     }
+
   </style>
 </head>
 <body>
-  <div id="infoClima">
-    🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
-  </div>
+<div id="infoClima">
+  🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
+</div>
 
   <!-- BOTONES SUPERIORES -->
   <div class="botones">
@@ -297,20 +296,17 @@
     actualizarCuentaRegresiva();
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
-
-    // Clima
+    
+    // Reemplazá con tu API key de OpenWeatherMap
     const API_KEY = "d011981d00cc64b6e856b683d20319d5";
     const ciudad = "Punta Cana";
-    const pais = "DO";
+    const pais = "DO"; // República Dominicana
 
     function obtenerClima() {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${API_KEY}&units=metric&lang=es`;
 
       fetch(url)
-        .then(response => {
-          if (!response.ok) throw new Error("Respuesta no válida");
-          return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
           const temp = data.main.temp;
           const desc = data.weather[0].description;
@@ -318,14 +314,14 @@
           document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
         })
         .catch(error => {
-          document.getElementById('infoClima').textContent = "⚠️ No se pudo cargar el clima.";
-          console.error("Error al obtener clima:", error);
+          document.getElementById('infoClima').textContent = "No se pudo cargar el clima.";
+          console.error("Error obteniendo el clima:", error);
         });
     }
 
     obtenerClima();
 
   </script>
+
 </body>
 </html>
-
