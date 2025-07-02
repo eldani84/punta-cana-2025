@@ -223,7 +223,58 @@
       min-height: 18px;
       color: #003366;
     }
+@media screen and (max-width: 600px) {
+  #infoClima, #conversorMoneda {
+    position: static;
+    width: 90%;
+    margin: 10px auto;
+    font-size: 12px;
+  }
 
+  #conversorMoneda select,
+  #conversorMoneda input,
+  #conversorMoneda button {
+    width: 100%;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+
+  .fechas {
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .boton {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    font-size: 15px;
+  }
+
+  #cuentaRegresiva {
+    font-size: 24px;
+    padding: 10px;
+  }
+
+  .barra {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .progreso {
+    font-size: 14px;
+  }
+
+  .lista-container input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .lista-container button {
+    width: 100%;
+  }
+}
 
   </style>
 </head>
@@ -426,58 +477,7 @@ fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amou
       resultado.textContent = 'No se pudo conectar con el servicio.';
     });
 });
-@media screen and (max-width: 600px) {
-  #infoClima, #conversorMoneda {
-    position: static;
-    width: 90%;
-    margin: 10px auto;
-    font-size: 12px;
-  }
 
-  #conversorMoneda select,
-  #conversorMoneda input,
-  #conversorMoneda button {
-    width: 100%;
-    font-size: 12px;
-    margin-top: 6px;
-  }
-
-  .fechas {
-    flex-direction: column;
-    gap: 10px;
-    font-size: 14px;
-  }
-
-  .boton {
-    display: block;
-    width: 90%;
-    margin: 10px auto;
-    font-size: 15px;
-  }
-
-  #cuentaRegresiva {
-    font-size: 24px;
-    padding: 10px;
-  }
-
-  .barra {
-    font-size: 16px;
-    padding: 8px;
-  }
-
-  .progreso {
-    font-size: 14px;
-  }
-
-  .lista-container input {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .lista-container button {
-    width: 100%;
-  }
-}
 
   </script>
 
