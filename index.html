@@ -407,7 +407,9 @@
 
   resultado.textContent = 'Convirtiendo...';
 
-  fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&apikey=d3ed579f8af0c4efd91dab998442e1b8`)
+
+fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&access_key=d3ed579f8af0c4efd91dab998442e1b8`)
+
     .then(res => res.json())
     .then(data => {
       console.log(data); // para depurar
