@@ -5,6 +5,19 @@
   <title>Barra del Avión - Viaje</title>
   <style>
     body {
+#infoClima {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: rgba(255,255,255,0.85);
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+      
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -138,7 +151,9 @@
   </style>
 </head>
 <body>
-
+<div id="infoClima">
+  🌤️ <span id="temp">--</span>°C - <span id="desc">cargando...</span>
+</div>
 <!-- ver clima -->
   <div id="clima" style="margin-top: 20px; background: rgba(255,255,255,0.85); padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
   🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
