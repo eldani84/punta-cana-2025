@@ -140,7 +140,7 @@
     }
 
     .item-viaje {
-      font-size: 10px;  /* Aquí achicamos la letra */
+      font-size: 12px;  /* Aquí achicamos la letra */
       background: #fff;
       margin: 6px 0;
       padding: 10px 15px;
@@ -407,7 +407,9 @@
 
       resultado.textContent = 'Convirtiendo...';
 
-      fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`)
+      
+      fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&apikey=046a69e0607d1c58714516a18b1334b8`)
+
         .then(res => res.json())
         .then(data => {
           if(data.result) {
