@@ -115,21 +115,6 @@
       overflow-y: auto;
       padding-left: 0;
       margin-top: 15px;
-      scrollbar-width: thin;
-      scrollbar-color: #0077cc #f0f0f0;
-    }
-    /* Scrollbar para navegadores basados en Webkit (Chrome, Edge, Safari) */
-    #listaViaje::-webkit-scrollbar {
-      width: 8px;
-    }
-    #listaViaje::-webkit-scrollbar-track {
-      background: #f0f0f0;
-      border-radius: 10px;
-    }
-    #listaViaje::-webkit-scrollbar-thumb {
-      background-color: #0077cc;
-      border-radius: 10px;
-      border: 2px solid #f0f0f0;
     }
 
     .lista-container input {
@@ -158,20 +143,18 @@
       background-color: #218838;
     }
 
-.item-viaje {
-  font-size: 12px; /* tamaño más pequeño */
-  background: #fff;
-  margin: 6px 0;
-  padding: 10px 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background 0.3s;
-  cursor: default;
-}
-
+    .item-viaje {
+      background: #fff;
+      margin: 6px 0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+      cursor: default;
+    }
 
     .item-viaje.completado {
       background-color: #e0ffe0;
@@ -338,8 +321,11 @@
           document.getElementById('infoClima').textContent = "⚠️ No se pudo cargar el clima.";
           console.error("Error al obtener clima:", error);
         });
-    });Add commentMore actions
+    }
+
+    obtenerClima();
+
   </script>
 </body>
 </html>
-    }
+
