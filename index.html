@@ -139,6 +139,11 @@
 </head>
 <body>
 
+<!-- ver clima -->
+  <div id="clima" style="margin-top: 20px; background: rgba(255,255,255,0.85); padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+  🌤️ Clima en Punta Cana: <span id="temp"></span>°C - <span id="desc"></span>
+  </div>
+
   <!-- BOTONES SUPERIORES -->
   <div class="botones">
     <a href="https://www.riu.com/en/hotel/dominican-republic/punta-cana/hotel-riurepublica" target="_blank" class="boton">🏨 VER HOTEL</a>
@@ -254,6 +259,31 @@
     actualizarCuentaRegresiva();
     setInterval(actualizarBarra, 60000);
     setInterval(actualizarCuentaRegresiva, 1000);
+    
+    // Reemplazá con tu API key de OpenWeatherMap
+const API_KEY = "d011981d00cc64b6e856b683d20319d5";
+const ciudad = "Punta Cana";
+const pais = "DO"; // República Dominicana
+
+function obtenerClima() {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${API_KEY}&units=metric&lang=es`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const temp = data.main.temp;
+      const desc = data.weather[0].description;
+      document.getElementById('temp').textContent = temp.toFixed(1);
+      document.getElementById('desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
+    })
+    .catch(error => {
+      document.getElementById('clima').textContent = "No se pudo cargar el clima.";
+      console.error("Error obteniendo el clima:", error);
+    });
+}
+
+obtenerClima();
+
   </script>
 
 </body>
