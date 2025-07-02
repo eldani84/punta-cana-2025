@@ -396,32 +396,33 @@
     const resultado = document.getElementById('resultado');
 
     btn.addEventListener('click', () => {
-      const from = document.getElementById('monedaOrigen').value;
-      const to = document.getElementById('monedaDestino').value;
-      const amount = parseFloat(document.getElementById('cantidad').value);
+  const from = document.getElementById('monedaOrigen').value;
+  const to = document.getElementById('monedaDestino').value;
+  const amount = parseFloat(document.getElementById('cantidad').value);
 
-      if (isNaN(amount) || amount <= 0) {
-        resultado.textContent = 'Ingresa una cantidad válida.';
-        return;
+  if (isNaN(amount) || amount <= 0) {
+    resultado.textContent = 'Ingresa una cantidad válida.';
+    return;
+  }
+
+  resultado.textContent = 'Convirtiendo...';
+
+  fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&apikey=046a69e0607d1c58714516a18b1334b8`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data); // para depurar
+      if (data && data.result != null) {
+        resultado.textContent = `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
+      } else {
+        resultado.textContent = 'Error al obtener la conversión.';
       }
-
-      resultado.textContent = 'Convirtiendo...';
-
-      
-      fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&apikey=046a69e0607d1c58714516a18b1334b8`)
-
-        .then(res => res.json())
-        .then(data => {
-          if(data.result) {
-            resultado.textContent = `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
-          } else {
-            resultado.textContent = 'Error al obtener la conversión.';
-          }
-        })
-        .catch(() => {
-          resultado.textContent = 'No se pudo conectar con el servicio.';
-        });
+    })
+    .catch(error => {
+      console.error('Error en la conversión:', error);
+      resultado.textContent = 'No se pudo conectar con el servicio.';
     });
+});
+
   </script>
 
 </body>
